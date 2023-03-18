@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <button id="connect-button">Connect Metamask</button>
+    <script>
+      let accounts;
+      let defaultAccount;
+      document
+        .getElementById("connect-button")
+        .addEventListener("click", function () {
+          if (window.ethereum !== undefined) {
+            console.log("Metamask is installed");
+            const getAccount = async function () {
+              accounts = await ethereum.request({
+                method: "eth_requestAccounts",
+              });
+              defaultAccount = accounts[0];
+              console.log(accounts);
+              console.log(defaultAccount);
+            };
+
+            getAccount();
+          } else {
+            alert("You do not have metamask installed");
+          }
+        });
+    </script>
+  </body>
+</html>
