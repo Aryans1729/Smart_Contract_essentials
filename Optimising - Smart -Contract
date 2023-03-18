@@ -1,0 +1,160 @@
+
+----------------------------------------------------------- Optimizing smart contract -------------------------------------------------------------
+--> Factors affecting gas consumption : 
+
+        1. Opcodes
+        2. State change
+        3. Transactions
+        4. Memory
+
+
+
+-->    Transaction fees = ( gas consumed * gas price ) * ( ether / 10^9 )
+
+                       Only we can reduce the gas consumtipn then only our transaction fees is reduced.
+                       
+                      #Note : The size of the block of the bitcoin blockchain is 1 MB, Whereas the size of one block of ethereum blockchain is 
+                              " 30 million gas ".
+                              
+                      #Note : The maximum no. of transaction in an ethereum block can be = 30 million / 21000 = 1428 transactions.
+                              Since a minimum typical transaction is of 21000 gas. 
+                              
+                      #Note : Execution cost is a subset of transaction cost. 
+ 
+                             Execution cost : All cost related to the internal storage and manipulation of the smart contract.
+                             
+                             
+                             Transaction cost : - All cost related to the internal storage and manipulation of the smart contract.
+                                                - The cost of sending data to the blockchain.
+                           
+                           
+--> Gas consumption : 
+
+              - For multiplication we can use left shift operator.
+              - For division we can use right shift operator.
+              
+                      By using these two we can reduce the gas cost.
+                      
+                      #NOTE IMPORTANT : It is upto the developer which opcode he should use so that the Integer overflow condition does not occur.
+                      
+                      It not always suggested that the right and left shift should be used. You have to observe then then take the decision according to it.
+                      
+                      
+--> Type of transaction : 
+
+             - Suppose we simply send ether from one account to another account, now if send do this transaction without hex data associated with it 
+               then it will cost less as compared to the transaction which have the hex data associated with it.
+               
+               
+--> Payable vs Non payanle : 
+
+         In this the payable function costs less gas as compared to the non payable function. This is because the opcode in the payable function are 
+         less as compared to the non payable functions because the non-payable function have an revert associated with it because it have to check 
+         whether there is any ether attached or not if ether is associated wtih the function then it should revert.
+         
+         
+         
+--> Memory :  
+
+         - Avoid the use of state variables as much as you can.
+         - In Ethereum data is stored in 32 bytes of slots.
+         
+         
+         
+         Like we take an example we declare two uint variables uint8 a = 12 and uint256 a = 12;
+         Then we will observe that uint256 will cost less amount of gas as compared to uint8 because in uint 8 padding are done to the remaining
+         bits will will cost higher gas than uint256.
+         
+         
+         
+   # Important Concept : 
+   
+          Variable Packing : We can reduce by this method. 
+           
+           eg : 
+    // uint128 a= 10;
+    // uint256 b = 12;
+    // uint128 c = 9;
+
+    uint128 a = 10;
+    uint128 b =9;
+    uint256 c = 12;
+    
+     In the above example as we can see that the cost in the second type of declaration is less due to variable packing it is a conceptin which ethereum check if there
+     are empt spaces left so that the next variable can fit in that space or not if it fits in that space then no new slot is created else padding is done 
+     and the next memory is used that is of 32 bytes.
+     
+     
+     
+ --> Example :  
+ 
+ // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+/*
+contract finalContract {
+
+     uint[] public array;
+     uint public sum;
+
+     constructor(){
+             array = [ 1,2,3,4,5];
+         }
+
+         function loop() external {
+              for( uint i = 0 ; i < array.length ; i++ ){
+              sum += array[i];
+                  }
+             }
+
+    }
+
+
+*/
+
+
+// Optimized Contract :  
+
+//3 Steps : 
+
+
+/*  
+        1. We can create a local variable sum so that we do not have to read the sum state variable
+           again and again and then set it to the state variable sum.
+
+        2. We can create a copy of the array in the function so that we do not have to read the
+           array state variable again and again.    
+
+        3. Since we know that the value of i will never overflow so we can put the value of i 
+           in unchecked so that not every time the value if i increases it should not check the overflow
+           condition.
+
+ */
+contract finalContract {
+
+     uint[] public array;
+     uint public sum;
+
+     constructor(){
+             array = [ 1,2,3,4,5];
+         }
+
+
+         function uncheckedVal(uint _num) private pure returns(uint){
+                unchecked{
+                      return _num + 1;
+                }
+         } 
+
+         function loop() external {
+              
+              uint[] memory _array = array;
+              uint _sum;
+              for( uint i = 0 ; i < _array.length ; i = uncheckedVal(i) ){
+              _sum += _array[i];
+                  }
+
+                  sum = _sum;
+             }
+
+    }
