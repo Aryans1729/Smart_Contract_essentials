@@ -27,3 +27,28 @@
     </script>
   </body>
 </html>
+------------------------------------------------------x---------------------------------------------x--------------------------------------------x----------------------
+                                              TEMPLATE FOR CONNECTING TO METAMASK (ETHERJS) - REACT
+                                              
+       useEffect(() => {
+    const connectWallet = async () => {
+      const contractAddress = CONTRACT ADDRESS;
+      const ABI = abi.abi ; // abi of contract
+      try {
+        const { ethereum } = window;
+
+        if (ethereum) {
+          const account = await ethereum.request({
+            method: "eth_requestAccounts",
+          });
+        }
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(contractAddress, ABI, signer);
+
+        setState({ provider, signer, contract });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    connectWallet();                                       
