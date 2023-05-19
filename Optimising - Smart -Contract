@@ -158,3 +158,13 @@ contract finalContract {
              }
 
     }
+    ----------------------------------------------------------------------*----------------------------*-------------------------------------*---------------------------------------------
+    
+    Even though the bytecode (Yul code) of the public and external functions are the same, the gas usage of the public function is less than the external function.
+    Conventionally, what we have known is that the external function consumes less gas as compared to the public function, since only the external function could take 
+    calldata arguments and the public functions were forced to take the more expensive memory arguments. But, in this case, we can see that the gas usage of the public function is less than the external function.
+
+    Even though the bytecode (Yul code) of the pre-increment and post-increment are the same, the gas usage of the pre-increment is less than the post-increment.
+    The above conclusions are neither perfect nor do they fully explain the reason behind the observations.
+    But, they do raise some questions as to why the gas usage of the public function is less than the external function and the gas usage of the pre-increment is less than the post-increment, even though the bytecode (Yul code) of both the functions are the same.
+    
